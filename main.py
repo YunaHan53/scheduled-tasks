@@ -26,7 +26,6 @@ will_rain = False
 weather_list = data["list"]
 for item in weather_list:
     date_time = item["dt_txt"]
-    date = date_time.split(" ")[0]
     time = date_time.split(" ")[1]
     weather = item["weather"]
     weather_id = weather[0]["id"]
@@ -39,7 +38,7 @@ if will_rain:
     client = Client(account_sid, auth_token)
     message = client.messages.create(
         from_="whatsapp:+14155238886",
-        body=f"There will be {description} today. Remember to bring an ☔",
+        body=f"There will be {description} today at {time}. Remember to bring an ☔",
         to="whatsapp:+18572588770"
     )
     print(message.status)
