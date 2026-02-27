@@ -19,26 +19,33 @@ status = response.status_code
 response.raise_for_status()
 
 data = response.json()
-print(f"HTTP Status: {status}")
-
 will_rain = False
 
 weather_list = data["list"]
 for item in weather_list:
     date_time = item["dt_txt"]
-    time = date_time.split(" ")[1]
+    date = date_time.split(" ")[0]
+    hour = int(date_time.split(" ")[1].split(":")[0])
+    est_hour = (hour-5)
+    if est_hour > 12:
+        est_hour -= 12
+        est_hour = f"{est_hour}PM"
+    else:
+        est_hour = f"{est_hour}AM"
+
     weather = item["weather"]
     weather_id = weather[0]["id"]
 
     if weather_id < 700:
         description = weather[0]["description"]
         will_rain = True
+        break
 
 if will_rain:
     client = Client(account_sid, auth_token)
     message = client.messages.create(
         from_="whatsapp:+14155238886",
-        body=f"There will be {description} today at {time}. Remember to bring an ☔",
+        body=f"There will be {description} today at {est_hour}. Remember to bring an ☔",
         to="whatsapp:+18572588770"
     )
     print(message.status)
